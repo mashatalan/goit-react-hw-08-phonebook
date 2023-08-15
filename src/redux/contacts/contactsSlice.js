@@ -4,25 +4,23 @@ import {
   deleteContact,
   editContact,
   fetchContacts,
-} from './operations';
+} from './contactsOperation';
 
 const handlePending = state => {
   state.isLoading = true;
 };
-
 const handleRejected = (state, action) => {
   state.isLoading = false;
   state.error = action.payload;
 };
-
 const handleFulfilled = state => {
   state.isLoading = false;
   state.error = null;
 };
 
-
 export const contactsSlice = createSlice({
   name: 'contacts',
+  // Початковий стан редюсера слайсу
   initialState: {
     items: [],
     isLoading: false,
@@ -46,14 +44,14 @@ export const contactsSlice = createSlice({
     [deleteContact.fulfilled](state, action) {
       handleFulfilled(state);
       const index = state.items.findIndex(
-        contact => contact.id === action.payload.id,
+        contact => contact.id === action.payload.id
       );
       state.items.splice(index, 1);
     },
     [editContact.fulfilled](state, action) {
       handleFulfilled(state);
       const index = state.items.findIndex(
-        contact => contact.id === action.payload.id,
+        contact => contact.id === action.payload.id
       );
       state.items.splice(index, 1, action.payload);
     },

@@ -2,8 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-
-axios.defaults.baseURL = 'https://64cea8880c01d81da3ef0121.mockapi.io/api/v1/';
+axios.defaults.baseURL = 'https://connections-api.herokuapp.com/';
 
 export const fetchContacts = createAsyncThunk(
   'contacts/fetchAll',
@@ -11,53 +10,54 @@ export const fetchContacts = createAsyncThunk(
     try {
       const response = await axios.get('/contacts');
       return response.data;
-    } catch (error) {
-      toast.error(`Something went wrong! ${error.message}`);
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (e) {
+      toast.error(`Something went wrong! ${e.message}`);
+      return thunkAPI.rejectWithValue(e.message);
     }
-  },
+  }
 );
 
 export const addContact = createAsyncThunk(
-  'contacts/addContacts',
+  'contacts/addContact',
   async (contactData, thunkAPI) => {
     try {
       const response = await axios.post('/contacts', {
         name: contactData.name,
-        phonenumber: contactData.phonenumbe,
+        number: contactData.number,
       });
       return response.data;
-    } catch (error) {
-      toast.error(`Something went wrong! ${error.message}`);
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (e) {
+      toast.error(`Something went wrong! ${e.message}`);
+      return thunkAPI.rejectWithValue(e.message);
     }
-  },
+  }
 );
+
 export const deleteContact = createAsyncThunk(
   'contacts/deleteContact',
   async (contactId, thunkAPI) => {
     try {
       const response = await axios.delete(`/contacts/${contactId}`);
       return response.data;
-    } catch (error) {
-      toast.error(`Something went wrong! ${error.message}`);
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (e) {
+      toast.error(`Something went wrong! ${e.message}`);
+      return thunkAPI.rejectWithValue(e.message);
     }
-  },
+  }
 );
+
 export const editContact = createAsyncThunk(
   'contacts/editContact',
   async (contactData, thunkAPI) => {
     try {
-      const response = await axios.put(`/contacts/${contactData.id}`, {
+      const response = await axios.patch(`/contacts/${contactData.id}`, {
         name: contactData.name,
-        phonenumber: contactData.phonenumber,
+        number: contactData.number,
       });
       return response.data;
-
-    } catch (error) {
-      toast.error(`Something went wrong! ${error.message}`);
-      return thunkAPI.rejectWithValue(error.message);
+    } catch (e) {
+      toast.error(`Something went wrong! ${e.message}`);
+      return thunkAPI.rejectWithValue(e.message);
     }
-  },
+  }
 );

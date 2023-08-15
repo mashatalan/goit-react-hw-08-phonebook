@@ -1,17 +1,18 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { HiUser } from 'react-icons/hi';
 import { ImPhone } from 'react-icons/im';
 import {
-  Item,
   ContactTel,
   ContactName,
   ContactInfo,
 } from 'components/ContactItem/ContactItem.styled';
 import { Controls, ControlsSave } from '../Controls/Controls';
 import EditForm from 'components/EditForm';
-import { useDispatch } from 'react-redux';
-import { deleteContact, editContact } from '../../redux/operations';
+import { editContact, deleteContact } from 'redux/contacts/contactsOperation';
+import { Box } from '@mui/material';
+import { cardNumberFormating } from 'utilities/cardNumberFormating';
 
 function ContactItem({ name, number, id }) {
   const [editName, setEditName] = useState(name);
@@ -20,7 +21,7 @@ function ContactItem({ name, number, id }) {
 
   const dispatch = useDispatch();
 
-  const handleDeleteContact = () => {
+  const handleDeleteContact = id => {
     dispatch(deleteContact(id));
   };
 
@@ -28,36 +29,46 @@ function ContactItem({ name, number, id }) {
     if (!isEdit) {
       setIsEdit(true);
     } else {
-      setEditName(newName);
-      setEditNumber(newNumber);
+      setEditName(prevName => (newName ? newName : prevName));
+      setEditNumber(prevNumber => (newNumber ? newNumber : prevNumber));
       setIsEdit(false);
 
       dispatch(
         editContact({
-          id,
-          name: newName,
-          number: newNumber,
-        })
+          id: id,
+          name: newName ? newName : name,
+          number: newNumber ? newNumber : number,
+        }),
       );
     }
   };
 
   return (
-    <Item>
+    <Box
+      component='li'
+      sx={{ display: 'flex', justifyContent: 'space-between', mb: '10px' }}
+    >
       {/* if contact saved show contact info */}
 
       {!isEdit && (
-        <ContactInfo>
-          <ContactName>
-            <HiUser />
-            {editName}:
-          </ContactName>
+        <>
+          <ContactInfo>
+            <ContactName>
+              <HiUser fill='#008080' />
+              {name}:
+            </ContactName>
 
-          <ContactTel>
-            <ImPhone />
-            {editNumber}
-          </ContactTel>
-        </ContactInfo>
+            <ContactTel>
+              <ImPhone fill='#008080' />
+              {cardNumberFormating(number)}
+            </ContactTel>
+          </ContactInfo>
+          <Controls
+            id={id}
+            onDeleteContact={handleDeleteContact}
+            onEditContact={handleEditContact}
+          />
+        </>
       )}
 
       {/* if contact is edit show edit form */}
@@ -70,15 +81,7 @@ function ContactItem({ name, number, id }) {
           <ControlsSave id={id} onDeleteContact={handleDeleteContact} />
         </EditForm>
       )}
-
-      {!isEdit && (
-        <Controls
-          id={id}
-          onDeleteContact={handleDeleteContact}
-          onEditContact={handleEditContact}
-        />
-      )}
-    </Item>
+    </Box>
   );
 }
 
